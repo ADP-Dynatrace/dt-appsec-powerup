@@ -1,0 +1,377 @@
+{
+  "metadata": {
+    "configurationVersions": [
+      5
+    ],
+    "clusterVersion": "1.234.107.20220204-114031"
+  },
+  "dashboardMetadata": {
+    "name": "CVE-2022-21724",
+    "shared": true,
+    "preset": true,
+    "owner": "DT ACE Services ",
+    "dashboardFilter": {
+      "timeframe": "-365d to now"
+    }
+  },
+  "tiles": [
+    {
+      "name": "Network status",
+      "tileType": "NETWORK_MEDIUM",
+      "configured": true,
+      "bounds": {
+        "top": 380,
+        "left": 304,
+        "width": 304,
+        "height": 152
+      },
+      "tileFilter": {
+        "managementZone": {
+          "id": "-7983918493927243144",
+          "name": "CVE-2022-21724"
+        }
+      }
+    },
+    {
+      "name": "Problems",
+      "tileType": "OPEN_PROBLEMS",
+      "configured": true,
+      "bounds": {
+        "top": 532,
+        "left": 608,
+        "width": 152,
+        "height": 152
+      },
+      "tileFilter": {
+        "managementZone": {
+          "id": "-7983918493927243144",
+          "name": "CVE-2022-21724"
+        }
+      }
+    },
+    {
+      "name": "",
+      "tileType": "HOSTS",
+      "configured": true,
+      "bounds": {
+        "top": 76,
+        "left": 0,
+        "width": 304,
+        "height": 304
+      },
+      "tileFilter": {},
+      "filterConfig": {
+        "type": "HOST",
+        "customName": "Hosts",
+        "defaultName": "Hosts",
+        "chartConfig": {
+          "legendShown": true,
+          "type": "TIMESERIES",
+          "series": [],
+          "resultMetadata": {}
+        },
+        "filtersPerEntityType": {
+          "HOST": {
+            "AUTO_TAGS": [
+              "CVE-2022-21724"
+            ]
+          }
+        }
+      },
+      "chartVisible": true
+    },
+    {
+      "name": "Network metrics",
+      "tileType": "NETWORK",
+      "configured": true,
+      "bounds": {
+        "top": 380,
+        "left": 0,
+        "width": 304,
+        "height": 304
+      },
+      "tileFilter": {
+        "managementZone": {
+          "id": "-7983918493927243144",
+          "name": "CVE-2022-21724"
+        }
+      }
+    },
+    {
+      "name": "Markdown",
+      "tileType": "MARKDOWN",
+      "configured": true,
+      "bounds": {
+        "top": 38,
+        "left": 0,
+        "width": 1140,
+        "height": 38
+      },
+      "tileFilter": {},
+      "markdown": "##[Vulnerability Overview](https://env.live.dynatrace.com/ui/security/vulnerabilities/17344706607612355562?gtf=-2h&gf=all)\n\n"
+    },
+    {
+      "name": "Smartscape",
+      "tileType": "PURE_MODEL",
+      "configured": true,
+      "bounds": {
+        "top": 76,
+        "left": 304,
+        "width": 304,
+        "height": 152
+      },
+      "tileFilter": {
+        "managementZone": {
+          "id": "-7983918493927243144",
+          "name": "CVE-2022-21724"
+        }
+      }
+    },
+    {
+      "name": "Markdown",
+      "tileType": "MARKDOWN",
+      "configured": true,
+      "bounds": {
+        "top": 0,
+        "left": 0,
+        "width": 1140,
+        "height": 38
+      },
+      "tileFilter": {},
+      "markdown": "##[NVD Overview](https://nvd.nist.gov/vuln/detail/CVE-2022-21724)"
+    },
+    {
+      "name": "Processes impacted by Component",
+      "tileType": "DATA_EXPLORER",
+      "configured": true,
+      "bounds": {
+        "top": 76,
+        "left": 608,
+        "width": 494,
+        "height": 456
+      },
+      "tileFilter": {
+        "managementZone": {
+          "id": "all",
+          "name": "All"
+        }
+      },
+      "customName": "Data explorer results",
+      "queries": [
+        {
+          "id": "A",
+          "metric": "total_process_affected",
+          "spaceAggregation": "PERCENTILE_90",
+          "timeAggregation": "DEFAULT",
+          "splitBy": [
+            "filename",
+            "cve"
+          ],
+          "filterBy": {
+            "filterOperator": "AND",
+            "nestedFilters": [
+              {
+                "filter": "cve",
+                "filterType": "DIMENSION",
+                "filterOperator": "OR",
+                "nestedFilters": [],
+                "criteria": [
+                  {
+                    "value": "CVE-2022-21724",
+                    "evaluator": "EQ"
+                  }
+                ]
+              }
+            ],
+            "criteria": []
+          },
+          "foldTransformation": "LAST_VALUE",
+          "enabled": true
+        }
+      ],
+      "visualConfig": {
+        "type": "TABLE",
+        "global": {
+          "hideLegend": false
+        },
+        "rules": [
+          {
+            "matcher": "A:",
+            "properties": {
+              "color": "DEFAULT",
+              "seriesType": "LINE"
+            },
+            "seriesOverrides": []
+          }
+        ],
+        "axes": {
+          "xAxis": {
+            "displayName": "",
+            "visible": true
+          },
+          "yAxes": []
+        },
+        "heatmapSettings": {},
+        "thresholds": [
+          {
+            "axisTarget": "LEFT",
+            "columnId": "total_process_affected",
+            "rules": [
+              {
+                "value": 0,
+                "color": "#7dc540"
+              },
+              {
+                "value": 25,
+                "color": "#f5d30f"
+              },
+              {
+                "value": 150,
+                "color": "#dc172a"
+              }
+            ],
+            "queryId": "A",
+            "visible": true
+          }
+        ],
+        "tableSettings": {
+          "isThresholdBackgroundAppliedToCell": true
+        },
+        "graphChartSettings": {
+          "connectNulls": false
+        }
+      }
+    },
+    {
+      "name": "Markdown",
+      "tileType": "MARKDOWN",
+      "configured": true,
+      "bounds": {
+        "top": 608,
+        "left": 304,
+        "width": 304,
+        "height": 76
+      },
+      "tileFilter": {},
+      "markdown": "###[Process Group Overview Remediation Tracker](https://env.live.dynatrace.com/ui/security/vulnerabilities/11497873967941161718/remediation-tracking?gtf=-2h&gf=all)\n"
+    },
+    {
+      "name": "Processes Impacted",
+      "tileType": "DATA_EXPLORER",
+      "configured": true,
+      "bounds": {
+        "top": 228,
+        "left": 304,
+        "width": 304,
+        "height": 152
+      },
+      "tileFilter": {},
+      "customName": "Data explorer results",
+      "queries": [
+        {
+          "id": "A",
+          "metric": "builtin:tech.generic.count",
+          "spaceAggregation": "PERCENTILE_90",
+          "timeAggregation": "DEFAULT",
+          "splitBy": [
+            "dt.entity.process_group"
+          ],
+          "filterBy": {
+            "filterOperator": "AND",
+            "nestedFilters": [
+              {
+                "filter": "dt.entity.process_group",
+                "filterType": "TAG",
+                "filterOperator": "OR",
+                "nestedFilters": [],
+                "criteria": [
+                  {
+                    "value": "CVE-2022-21724",
+                    "evaluator": "IN"
+                  }
+                ]
+              }
+            ],
+            "criteria": []
+          },
+          "enabled": true
+        }
+      ],
+      "visualConfig": {
+        "type": "PIE_CHART",
+        "global": {
+          "hideLegend": false
+        },
+        "rules": [
+          {
+            "matcher": "A:",
+            "properties": {
+              "color": "DEFAULT",
+              "seriesType": "LINE"
+            },
+            "seriesOverrides": []
+          }
+        ],
+        "axes": {
+          "xAxis": {
+            "displayName": "",
+            "visible": true
+          },
+          "yAxes": []
+        },
+        "heatmapSettings": {},
+        "thresholds": [
+          {
+            "axisTarget": "LEFT",
+            "columnId": "Process count per process group",
+            "rules": [
+              {
+                "color": "#7dc540"
+              },
+              {
+                "color": "#f5d30f"
+              },
+              {
+                "color": "#dc172a"
+              }
+            ],
+            "queryId": "",
+            "visible": true
+          }
+        ],
+        "tableSettings": {
+          "isThresholdBackgroundAppliedToCell": false
+        },
+        "graphChartSettings": {
+          "connectNulls": false
+        }
+      }
+    },
+    {
+      "name": "Markdown",
+      "tileType": "MARKDOWN",
+      "configured": true,
+      "bounds": {
+        "top": 532,
+        "left": 304,
+        "width": 304,
+        "height": 38
+      },
+      "tileFilter": {},
+      "markdown": "##❗Additional information❗"
+    },
+    {
+      "name": "Markdown",
+      "tileType": "MARKDOWN",
+      "configured": true,
+      "bounds": {
+        "top": 570,
+        "left": 304,
+        "width": 304,
+        "height": 38
+      },
+      "tileFilter": {},
+      "markdown": "###[Public Internet Exposure](https://env.live.dynatrace.com/#newprocessessummary;gtf=-2h;gf=all;EXPOSING_SECURITY_PROBLEM=11497873967941161718)"
+    }
+  ]
+}

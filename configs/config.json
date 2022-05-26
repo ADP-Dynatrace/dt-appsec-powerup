@@ -1,0 +1,23 @@
+{
+    "tenants": [
+        "NonProd",
+        "PreProd",
+        "Prod",
+        "NonProd_EMEA_STAG",
+        "NonProd_EMEA_DEV",
+        "ProdEMEA"
+    ],
+    "cves": [
+        "CVE-2021-44228",
+        "CVE-2021-45046",
+        "CVE-2017-5645",
+        "CVE-2021-44832",
+        "CVE-2021-4104",
+        "CVE-2021-45105",
+        "CVE-2022-21724",
+        "CVE-2022-27772",
+        "CVE-2022-22965",
+        "CVE-2022-22963",
+        "CVE-2022-22947"
+    ]
+}

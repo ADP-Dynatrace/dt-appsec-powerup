@@ -1,0 +1,39 @@
+{
+    "metadata": {
+      "configurationVersions": [
+        0
+      ],
+      "clusterVersion": "1.231.232.20211216-105440"
+    },
+    "name": "CVE-2021-44228",
+    "description": " ",
+    "rules": [
+      {
+        "type": "PROCESS_GROUP",
+        "enabled": true,
+        "propagationTypes": [
+          "PROCESS_GROUP_TO_SERVICE",
+          "PROCESS_GROUP_TO_HOST"
+        ],
+        "conditions": [
+          {
+            "key": {
+              "attribute": "HOST_TAGS",
+              "type": "STATIC"
+            },
+            "comparisonInfo": {
+              "type": "TAG",
+              "operator": "TAG_KEY_EQUALS",
+              "value": {
+                "context": "CONTEXTLESS",
+                "key": "CVE-2021-44228"
+              },
+              "negate": false
+            }
+          }
+        ]
+      }
+    ],
+    "dimensionalRules": [],
+    "entitySelectorBasedRules": []
+  }

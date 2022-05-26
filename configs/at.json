@@ -1,0 +1,38 @@
+{
+    "metadata": {
+      "configurationVersions": [
+        7
+      ],
+      "clusterVersion": "1.231.232.20211216-105440"
+    },
+    "name": "CVE-2021-44832",
+    "description": " ",
+    "rules": [
+      {
+        "type": "SERVICE",
+        "enabled": true,
+        "valueFormat": null,
+        "propagationTypes": [
+          "SERVICE_TO_HOST_LIKE"
+        ],
+        "conditions": [
+          {
+            "key": {
+              "attribute": "PROCESS_GROUP_TAGS",
+              "type": "STATIC"
+            },
+            "comparisonInfo": {
+              "type": "TAG",
+              "operator": "TAG_KEY_EQUALS",
+              "value": {
+                "context": "CONTEXTLESS",
+                "key": "CVE-2021-44832"
+              },
+              "negate": false
+            }
+          }
+        ]
+      }
+    ],
+    "entitySelectorBasedRules": []
+  }
