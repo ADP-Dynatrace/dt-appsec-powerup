@@ -1,5 +1,5 @@
 # Dynatrace AppSec Powerup
-Automated Security Reporting Tool for for Dynatrace Security
+Automated Security Reporting Utility for for Dynatrace Security
 
 ## Features
 Built with log4j in mind, the remediator provides the ability to:
