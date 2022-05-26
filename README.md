@@ -1,5 +1,5 @@
-# Dynatrace AppSec Remediator V1.06
-Command Line Automated Security Reporting Tool for  for DT Security
+# Dynatrace AppSec Powerup
+Automated Security Reporting Tool for for Dynatrace Security
 
 ## Features
 Built with log4j in mind, the remediator provides the ability to:
