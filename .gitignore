@@ -1,0 +1,10 @@
+.env
+raw_data/*.json
+security_exports/*.json
+__pycache__/
+query.py
+*.json
+*.log
+*.txt
+remediation_reports
+deliverable_reports

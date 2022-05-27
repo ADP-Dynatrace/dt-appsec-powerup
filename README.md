@@ -131,7 +131,7 @@ Tagging all the vulnerable processes in each tenant can be accomplished with `au
 
 1. Run `python main.py auto_tag` to tag all default CVEs in all default tenants. This can be run periodically to keep an updated list.
 
-2. Independently from the tagger, `python main.py push_configs --cve [CVE OF YOUR CHOICE]` (i.e. `python main.py push_configs --cve CVE-2021-44832`) will create automatic tags, managment zones, and dashboards for each CVE. Running once will set up for the tenant, and subsequent runs will detect the already exisiting configurations and skip. All will be named after the CVE they were created for.
+2. Independently from the tagger, `python main.py push_configs` will create automatic tags, managment zones, and dashboards for each CVE. Running once will set up for the tenant, and subsequent runs will detect the already exisiting configurations and skip. All will be named after the CVE they were created for.
 
 The `metrics` affords the additional metric **total_process_affected**, which, as the name suggests, measures the current total number of processes that are affected by a vulnerability. In the data explorer, this can be placed on a dashboard or even just trigged as an alert.
 

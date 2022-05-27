@@ -1,11 +1,6 @@
 {
     "tenants": [
-        "NonProd",
-        "PreProd",
-        "Prod",
-        "NonProd_EMEA_STAG",
-        "NonProd_EMEA_DEV",
-        "ProdEMEA"
+        "NonProd"
     ],
     "cves": [
         "CVE-2021-44228",
