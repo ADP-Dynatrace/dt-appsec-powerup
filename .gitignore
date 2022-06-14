@@ -8,3 +8,4 @@ query.py
 *.txt
 remediation_reports
 deliverable_reports
+testing.py

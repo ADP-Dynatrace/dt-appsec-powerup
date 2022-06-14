@@ -6,7 +6,7 @@ from reporter_utils import read_json
 from remediation_reporter import remediation_reporter
 from configurations import configurator
 from metrics import metrics
-from excelerate import excelerate
+from excel_csv_reporter import to_excel
 
 load_dotenv()
 tenants = read_json("./configs/config.json")["tenants"]
@@ -22,13 +22,19 @@ Description
     Generate a report based off a risk level, environment and CVE
 
 Commands [Mandatory]:
-    report: generate a report based on a risk level and an environment
-    tag: generates tags based on a run report of a risk level and environment  
+    rstatus: generate a report based on a risk level and an environment
+    auto_tag: generates tags based on a run report of a risk level and environment  
+    cve_lookup: Provides DT Problem id for a given CVE
+    reset_tags: Removes tags for provided cve and environment
+    push_configs: Creates Tags, Management Zones, & dashboards for given CVE
+    metrics: Pushes Metrics based on vulnerable components
 
 Args [Mandatory]:
-    --rl risk level, possible values are: exposed, affected
     --env environment, possible values are: {*tenants,} or "all"
     --cve cve id ex: CVE-2021-45046
+
+Args [Optional]:
+    --rl risk level, possible values are: exposed, affected
     --v vulnerability state
 
 Examples: 
@@ -48,7 +54,7 @@ Examples:
 
 
 def args_parse(args):
-    '''
+    """
     Parses the arguments passed to the python script when it is run
 
             Parameters:
@@ -56,7 +62,7 @@ def args_parse(args):
 
             Returns:
                     args_dict (dict): Dictionary of command line arguments
-    '''
+    """
     args_dict = dict()
 
     if "--rl" in args:
@@ -82,17 +88,17 @@ def args_parse(args):
 
 
 def init_class(env, class_type, cve=None):
-    '''
+    """
     Initialize the desired class: tag_generator, configurator, metrics, remediation_reporter,
 
             Parameters:
-                env: Dynatrace Environment 
+                env: Dynatrace Environment
                 class_type: Class type to be created
                 cve: CVE that is to be used for execution
 
             Returns:
                     output (dict): Will either return the initialized class or the executable will terminate
-    '''
+    """
     output = None
     if env in tenants:
         tenant_info = {
@@ -116,30 +122,30 @@ def init_class(env, class_type, cve=None):
 
 
 def resolve_cve(cve):
-    '''
+    """
     Resolve the CVE by obtaining the DT Problem ID that maps to the external CVE
 
             Parameters:
                 cve: CVE that is to be used for execution
 
             Returns:
-                    problem_id (string): Returns the DT Problem ID 
-    '''
+                    problem_id (string): Returns the DT Problem ID
+    """
     dt_report = init_class(tenants[0], "rem", cve)
     problem_id = dt_report.cve_lookup(cve)
     return problem_id
 
 
 def get_cves(params):
-    '''
-    Gather all envirionments impacted by CVE
+    """
+    Gather all environments impacted by CVE
 
             Parameters:
-               params: Command Line Parameters 
+               params: Command Line Parameters
 
             Returns:
                      cve_dict (dict): Dictionary of environments and the respective DT Problem ID
-    '''
+    """
     print(f"Getting all environments with valid CVE id: {params['cve']}")
     cve_dict = {}
     for env in tenants:
@@ -150,22 +156,22 @@ def get_cves(params):
 
 
 def cve_lookup(params):
-    '''
+    """
     Lookup the DT ENV ID for a CVE
 
             Parameters:
-               params: Command Line Parameters 
+               params: Command Line Parameters
 
             Returns:
-                     None 
-    '''
+                     None
+    """
     cve_ids = get_cves(params)
     for env, cve_id in cve_ids.items():
         print(f"Environment: {env}, id: {cve_id}")
 
 
 def gen_tag(env, cve):
-    '''
+    """
     Generate the tags for envrionment based on a provided CVE
 
             Parameters:
@@ -173,14 +179,14 @@ def gen_tag(env, cve):
                cve: CVE to generate tags for
 
             Returns:
-                     None 
-    '''
+                     None
+    """
     dt_tagger = init_class(env, "tagger", cve)
     dt_tagger.tag()
 
 
 def remediation_report(env, cve, vstate=None):
-    '''
+    """
     Generate remediation report for envrionment based on a provided CVE
 
             Parameters:
@@ -188,8 +194,8 @@ def remediation_report(env, cve, vstate=None):
                cve: CVE to generate tags for
 
             Returns:
-                     None 
-    '''
+                     None
+    """
     rem_reporter = init_class(env, "rem", cve)
     if vstate is not None:
         rem_reporter.set_vState(vstate.upper())
@@ -200,7 +206,7 @@ def remediation_report(env, cve, vstate=None):
 
 
 def all_envs(params, fn):
-    '''
+    """
     Generate remediation reports or tags for all envrionments based on a provided CVE
 
             Parameters:
@@ -208,8 +214,8 @@ def all_envs(params, fn):
                fn: Function to be used
 
             Returns:
-                     None 
-    '''
+                     None
+    """
     cve_ids = get_cves(params)
     for env in cve_ids:
         if fn == "gt":
@@ -225,15 +231,15 @@ def all_envs(params, fn):
 
 
 def auto_tag(params):
-    '''
+    """
     Wrapper Function for genearting tags
 
             Parameters:
                params: Command line paramaters
 
             Returns:
-                     None 
-    '''
+                     None
+    """
     if params["cve"] == None and params["env"] == None:
         for cve in cves:
             print(cve)
@@ -248,15 +254,15 @@ def auto_tag(params):
 
 
 def rstatus(params):
-    '''
+    """
     Wrapper Function for genearting remediation reports
 
             Parameters:
                params: Command line paramaters
 
             Returns:
-                     None 
-    '''
+                     None
+    """
     if params["cve"] == None and params["env"] == None:
         for cve in cves:
             params["cve"] = cve
@@ -270,17 +276,17 @@ def rstatus(params):
 
 
 def push_configs(params):
-    '''
+    """
     Create configurations in Dynatrace, specifically Management Zone (mz) for CVE, Auto Tags (at) for CVE, Dashboard for CVE.
-    If no CVE and ENV are provided, all cves and envs from the configuration file will be used, 
+    If no CVE and ENV are provided, all cves and envs from the configuration file will be used,
     If no CVE but an ENV is provided, all cves from the configuration and the specified environment will be used, similar for no ENV but CVE
 
             Parameters:
                params: Command line paramaters
 
             Returns:
-                     None 
-    '''
+                     None
+    """
     print(params)
     if params["cve"] == None and params["env"] == None:
         for cve in cves:
@@ -310,18 +316,18 @@ def push_configs(params):
         dt_configurator.run("dashboard")
 
 
-def push_metrics(params): 
-    '''
+def push_metrics(params):
+    """
     Push metrics to Dynatrace based on CVE.
-    If no CVE and ENV are provided, all cves and envs from the configuration file will be used, 
+    If no CVE and ENV are provided, all cves and envs from the configuration file will be used,
     If no CVE but an ENV is provided, all cves from the configuration and the specified environment will be used, similar for no ENV but CVE
 
             Parameters:
                params: Command line paramaters
 
             Returns:
-                     None 
-    '''
+                     None
+    """
     if params["cve"] == None and params["env"] == None:
         for cve in cves:
             params["cve"] = cve
@@ -354,27 +360,27 @@ def push_metrics(params):
 
 
 def help():
-    '''
-    Prints help message to terminal 
-        Params: 
+    """
+    Prints help message to terminal
+        Params:
             None
         Output:
             None
-    '''
+    """
     print(help_msg)
 
 
 def run():
-    '''
+    """
     Takes in arguments and uses correct "commmand"
-        Params: 
+        Params:
             None
         Output:
             None
-    '''
+    """
     commands = {
         "rstatus": rstatus,
-        "excelerate": excelerate,
+        "to_excel": to_excel,
         "auto_tag": auto_tag,
         "cve_lookup": cve_lookup,
         "push_configs": push_configs,
