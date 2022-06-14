@@ -112,7 +112,7 @@ where: (no param will automatically select all available)
 
 Each JSON file created by the reporter lays out the process group instances that are vulnerable to a CVE. If none are found in a tenant environment, then no JSON will be created.
 
-To create a report files, run the `python main.py to_excel` command to create .xlsx files for each cve, one for resolved and one for vulnerable with each sheet of the respective .xlsx pertaining to a tenant. Then, .csv files are created for each sheet/tenant as well. Each execution of the script will create/overwrite with a new directory/files, but will otherwise not initially delete the previously created directory/files.
+To create a report files, run the `python main.py to_excel` command to create .xlsx files for each cve, one for resolved and one for vulnerable with each sheet of the respective .xlsx pertaining to a tenant. Then, .csv files are created for each sheet/tenant as well. Each execution of the script will delete then create a new directory for csv/excel files, and will delete the generated jsons upon completion.
 
 ## Tasks
 
@@ -133,7 +133,7 @@ Tagging all the vulnerable processes in each tenant can be accomplished with `au
 
 1. Run `python main.py auto_tag` to tag all default CVEs in all default tenants. This can be run periodically to keep an updated list.
 
-2. Independently from the tagger, `python main.py push_configs --cve [CVE OF YOUR CHOICE]` (i.e. `python main.py push_configs --cve CVE-2021-44832`) will create automatic tags, managment zones, and dashboards for each CVE. Running once will set up for the tenant, and subsequent runs will detect the already exisiting configurations and skip. All will be named after the CVE they were created for.
+2. Independently from the tagger, `python main.py push_configs` will create automatic tags, managment zones, and dashboards for each CVE. Running once will set up for the tenant, and subsequent runs will detect the already exisiting configurations and skip. All will be named after the CVE they were created for.
 
 The `metrics` affords the additional metric **total_process_affected**, which, as the name suggests, measures the current total number of processes that are affected by a vulnerability. In the data explorer, this can be placed on a dashboard or even just trigged as an alert.
 
