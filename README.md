@@ -1,4 +1,4 @@
-# Dynatrace AppSec Powerup
+# Dynatrace AppSec Powerup V1.5
 Automated Security Reporting Utility for for Dynatrace Security
 
 ## Features
@@ -19,7 +19,7 @@ The Remediation Reporter expands on the value to be gained from AppSec through g
 5. managment zones,
 6. and application owners
 
-Running one more command, `excelerate` will create the `deliverable_reports` directory containing .xlsx and corresponding .csv reports respective to vulnerability status and environment. Going forward, reports will be automatically supported in only .csv for the end user.
+Running one more command, `to_excel` will create the `deliverable_reports` directory containing .xlsx and corresponding .csv reports respective to vulnerability status and environment. Going forward, reports will be automatically supported in only .csv for the end user.
 
 ## Usage
 ### **Setup**
@@ -112,26 +112,28 @@ where: (no param will automatically select all available)
 
 Each JSON file created by the reporter lays out the process group instances that are vulnerable to a CVE. If none are found in a tenant environment, then no JSON will be created.
 
-To create a report files, run the `python main.py excelerate` command to create .xlsx files for each cve, one for resolved and one for vulnerable with each sheet of the respective .xlsx pertaining to a tenant. Then, .csv files are created for each sheet/tenant as well. Each execution of the script will create/overwrite with a new directory/files, but will otherwise not initially delete the previously created directory/files.
+To create a report files, run the `python main.py to_excel` command to create .xlsx files for each cve, one for resolved and one for vulnerable with each sheet of the respective .xlsx pertaining to a tenant. Then, .csv files are created for each sheet/tenant as well. Each execution of the script will create/overwrite with a new directory/files, but will otherwise not initially delete the previously created directory/files.
 
 ## Tasks
 
 ### **Remediation Report**
 
-The creation of a set of reports in .csv format can be done with two commands, `rstatus` and `excelerate`. The most common use case would be to create a report of all the vulnerable processes across all default tenants. For best results, clearing the `remediation_reports` and `deliverable_reports` directories periodically before running will avoid any possible data mismatches.
+***As of V1.5, the single script `run.sh` will run the remedation report and create the csv excel files.***
+
+The creation of a set of reports in .csv format can be done with two commands, `rstatus` and `to_excel`. The most common use case would be to create a report of all the vulnerable processes across all default tenants. For best results, clearing the `remediation_reports` and `deliverable_reports` directories periodically before running will avoid any possible data mismatches.
 
 1. Running the following `python main.py --vstatus vulnerable` will begin iterating through the list of tenants for each CVE.
 
 2. Once complete, the `remediation_reports` directory will contain a folder for each CVE, each CVE folder containing a JSON file for each tenant.
 
-3. Running `python main.py excelerate` then initiates the report creation. If `deliverable_reports` is not present, it will be created, before generating .xlsx files for each cve, one for resolved and one for vulnerable (if either type of jsons are present) in each created CVE folder. Finally, .csv files for each of the sheets in each .xlsx are created, housed in either a `resolved` or `vulnerable` directory.
+3. Running `python main.py to_excel` then initiates the report creation. If `deliverable_reports` is not present, it will be created, before generating .xlsx files for each cve, one for resolved and one for vulnerable (if either type of jsons are present) in each created CVE folder. Finally, .csv files for each of the sheets in each .xlsx are created, housed in either a `resolved` or `vulnerable` directory.
 
 ### **Tenant Vulnerablity Monitoring**
 Tagging all the vulnerable processes in each tenant can be accomplished with `auto_tag` and `push_configs`, with the latter only needed to run once per CVE for each tenant.
 
 1. Run `python main.py auto_tag` to tag all default CVEs in all default tenants. This can be run periodically to keep an updated list.
 
-2. Independently from the tagger, `python main.py push_configs` will create automatic tags, managment zones, and dashboards for each CVE. Running once will set up for the tenant, and subsequent runs will detect the already exisiting configurations and skip. All will be named after the CVE they were created for.
+2. Independently from the tagger, `python main.py push_configs --cve [CVE OF YOUR CHOICE]` (i.e. `python main.py push_configs --cve CVE-2021-44832`) will create automatic tags, managment zones, and dashboards for each CVE. Running once will set up for the tenant, and subsequent runs will detect the already exisiting configurations and skip. All will be named after the CVE they were created for.
 
 The `metrics` affords the additional metric **total_process_affected**, which, as the name suggests, measures the current total number of processes that are affected by a vulnerability. In the data explorer, this can be placed on a dashboard or even just trigged as an alert.
 
@@ -139,14 +141,8 @@ The `metrics` affords the additional metric **total_process_affected**, which, a
 
 
 ## Limitations
-- Due to the nature of the script, longer reports (multiple CVE's, multiple and/or large tenants) may take a longer time to complete than single CVE/tenant environment.
-    - A workaround is to run batches of single/selective CVE/tenant commands in multiple command lines to run tasks in parallel
-        - Example in `cve_batch.txt`
-
-## Planned Updates
-- Further updates to come in V2...
-
-## Currently Tracked CVE's:
+- No GUI, coming in V2...
+## Default Tracked CVE's:
 + CVE-2017-5645
 + CVE-2021-44228
 + CVE-2021-45046

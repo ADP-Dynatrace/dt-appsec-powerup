@@ -1,7 +1,9 @@
 import json
-import datetime
+from datetime import datetime
 import logging
+import time
 from time import sleep
+import os
 from reporter_utils import reporter_utils
 
 
@@ -18,7 +20,7 @@ class remediation_reporter(reporter_utils):
             entity_id: id of process group
             data: filtered data to be added to
         """
-        res = self._get_entity_info(entity_id)
+        res = self._get_pg_info(entity_id)
         meta_values = ["COMMAND_LINE_ARGS", "JAVA_JAR_PATH"]
         tag_values = ["HostIP"]
         data["Management Zone(s)"] = "Unknown"
@@ -44,62 +46,35 @@ class remediation_reporter(reporter_utils):
             parser ([dict]): [:dict filtered dictionary]
         """
         filtered_data = {}
-        numOfPGs = len(self.api_data.get("remediationItems"))
-        attempts = 0
-        print(
-            f"Running Reports for : {self.name} \nEstimated number of PGs: {numOfPGs}"
-        )
-
-        for pg in range(numOfPGs):
-            try:
-                if pg % 100 == 0:
-                    print(f"Number of Process Groups parsed: {pg}")
-                    sleep(10)
-
-                item = self.api_data.get("remediationItems")[pg]
-                name = item.get("name")
-
-                numofAffected = len(item["remediationProgress"]["affectedEntities"])
-                total = (
-                    len(item["remediationProgress"]["unaffectedEntities"])
-                    + numofAffected
-                )
-                vulnerableComponents = ""
-                numOfVulComp = len(item["vulnerableComponents"])
-                for itter in range(numOfVulComp):
-                    if itter != numOfVulComp - 1:
-                        vulnerableComponents += (
-                            f"{item['vulnerableComponents'][itter]['displayName']},"
-                        )
-                    else:
-                        vulnerableComponents += (
-                            f"{item['vulnerableComponents'][itter]['displayName']}"
-                        )
-
-                filtered_data[name] = {
-                    "URL": f"{self.url}#processgroupdetails;id={item.get('id')}",
-                    "Processes Affected": f"{numofAffected}/{total}",
-                    "Vulnerable Component": vulnerableComponents,
-                }
-
-                filtered_data[name] = self._get_extra(
-                    item.get("id"), filtered_data[name]
-                )
-
-            except Exception as error:
-                if attempts != self.retry_max:
-                    error_msg = f"Failed to create report due to {error} \nNext attempt in 1 minute"
-                    print(error_msg)
-                    logging.error(error_msg)
-
-                    sleep(61)
-                    pg -= 1
-                    attempts += 1
+        
+        for pg in self.api_data["remediationItems"]:
+            name = pg["name"] 
+            number_of_affected = len(pg["remediationProgress"]["affectedEntities"])
+            
+            total = (len(pg["remediationProgress"]["unaffectedEntities"]) + number_of_affected)
+            
+            vulnerable_components = ""
+            num_of_vuln_comp = len(pg["vulnerableComponents"])
+            
+            for component in range(num_of_vuln_comp):
+                component_name=pg['vulnerableComponents'][component]['displayName']
+                if component != num_of_vuln_comp - 1:
+                    vulnerable_components += (f"{component_name},")
                 else:
-                    logging.error(f"Error {error}")
-                    raise Exception
+                    vulnerable_components += (component_name)
 
-        print(f"Total Process Groups: {len(filtered_data)}")
+            filtered_data[name] = {
+                "URL": f"{self.url}#processgroupdetails;id={pg['id']}",
+                "Processes Affected": f"{number_of_affected}/{total}",
+                "Vulnerable Component": vulnerable_components,
+            }
+
+            filtered_data[name] = self._get_extra(
+                pg["id"], filtered_data[name]
+            )
+                    
+        print(datetime.fromtimestamp(int(time.time())).strftime("[%m/%d/%Y %H:%M:%S]: ") + 
+              f"Total Process Groups for {self.tenant}: {len(filtered_data.keys())}")
 
         self.filtered_data = filtered_data
 
@@ -110,20 +85,15 @@ class remediation_reporter(reporter_utils):
         Args:
             filtered_data ([type]): [description]
         """
-        if self.filtered_data != {}:
-            date = datetime.datetime.now().strftime("%m%d%Y")
-            self._mkdir(f"./remediation_reports/{self.cve}")
-            print(f"Writing Remediation Report for {self.name} ")
-            logging.info(f"Writing Remediation Report for {self.name}")
-            self._write_json(
-                f"./remediation_reports/{self.cve}/{self.name}_{self.vState}",
-                self.filtered_data,
-                "w",
-            )
-        else:
-            self._rmfile(
-                f"./remediation_reports/{self.cve}/{self.name}_{self.vState}.json"
-            )
+        self._mkdir(f"./remediation_reports/{self.cve}")
+        print(datetime.fromtimestamp(int(time.time())).strftime("[%m/%d/%Y %H:%M:%S]:")+f"Writing {self.cve} Remediation Report for {self.name} ")
+        logging.info(f"Writing {self.cve} Remediation Report for {self.name}")
+        self._write_json(
+            f"{self.name}_{self.vState}",
+            self.filtered_data,
+            dir=f"remediation_reports/{self.cve}/",
+            write="w"
+        )
 
     def generate_report(self):
         """
@@ -134,5 +104,10 @@ class remediation_reporter(reporter_utils):
             cve ([string]): CVE for open problem
         """
         self.get_remediation()
-        self._parser()
-        self._export()
+
+        if len(self.api_data["remediationItems"]) > 0:
+            self._parser()
+            self._export()
+        else:
+            print(datetime.fromtimestamp(int(time.time())).strftime("[%m/%d/%Y %H:%M:%S]: ") + 
+              f"No remediation items found, skipping report {self.cve} for {self.tenant}")
