@@ -1,6 +1,11 @@
 # Dynatrace AppSec Powerup V1.5
 Automated Security Reporting Utility for for Dynatrace Security
 
+## Install
+
+1. Drag this folder to a directory of your choice
+2. With [python](https://www.python.org/downloads/) and [pip](https://pip.pypa.io/en/stable/installation/) installed, run `pip install -r requirements.txt` in a command line started in this directory
+
 ## Features
 Built with log4j in mind, the remediator provides the ability to:
 1. Tag CVE's within a tenant
@@ -142,6 +147,8 @@ The `metrics` affords the additional metric **total_process_affected**, which, a
 
 ## Limitations
 - No GUI, coming in V2...
+
+
 ## Default Tracked CVE's:
 + CVE-2017-5645
 + CVE-2021-44228
